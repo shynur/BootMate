@@ -1,0 +1,1328 @@
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-1
+
+
+				assume cs:code,ss:stack 
+				 
+ 0000				stack segment 
+ 0000  0020[			    db 32 dup (0) 
+	   00			
+			 ]	
+				
+ 0020				stack ends 
+				 
+ 0000				code segment 
+ 0000				    start: 
+ 0000  B8 ---- R		        mov ax,stack 
+ 0003  8E D0			        mov ss,ax 
+ 0005  BC 0020			        mov sp,32             ;SS:SP=stack:32 
+				 
+ 0008  E8 0016 R		        call installer1 
+ 000B  E8 0036 R		        call installer2 
+ 000E  E8 0056 R		        call installer3 
+				 
+ 0011  B8 4C00			        mov ax,4c00h 
+ 0014  CD 21			        int 21h 
+				;XXXXXXXXXXXXXXXXXXXXXThree installer-functions
+				 are here.XXXXXXXXXXXXXXXXXXXXXXX 
+ 0016				installer1: 
+				    ;boot.exe in 1 
+				 
+ 0016  53			    push bx 
+ 0017  06			    push es 
+ 0018  50			    push ax 
+ 0019  51			    push cx 
+ 001A  52			    push dx 
+				 
+ 001B  BB ---- R		    mov bx,seg first_installed 
+ 001E  8E C3			    mov es,bx 
+ 0020  BB 0076 R		    mov bx,offset first_installed   ;es:bx -> f
+				irst_installed 
+				 
+ 0023  B4 03			    mov ah,3    ;write 
+ 0025  B0 01			    mov al,1    ;amount 
+ 0027  B5 00			    mov ch,0 
+ 0029  B1 01			    mov cl,1    ;number:1 
+ 002B  BA 0000			    mov dx,0 
+ 002E  CD 13			    int 13h 
+				 
+ 0030  5A			    pop dx 
+ 0031  59			    pop cx 
+ 0032  58			    pop ax 
+ 0033  07			    pop es 
+ 0034  5B			    pop bx 
+ 0035  C3			    ret 
+				;----------------------------------------------
+				--------------------------------- 
+ 0036				installer2: 
+				    ;newint.exe in 2 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-2
+
+
+				 
+ 0036  53			    push bx 
+ 0037  06			    push es 
+ 0038  50			    push ax 
+ 0039  51			    push cx 
+ 003A  52			    push dx 
+				 
+ 003B  BB ---- R		    mov bx,seg second_installed 
+ 003E  8E C3			    mov es,bx 
+ 0040  BB 04F2 R		    mov bx,offset second_installed   ;es:bx -> 
+				second_installed 
+				 
+ 0043  B4 03			    mov ah,3    ;write 
+ 0045  B0 01			    mov al,1    ;amount 
+ 0047  B5 00			    mov ch,0 
+ 0049  B1 02			    mov cl,2    ;number:2 
+ 004B  BA 0000			    mov dx,0 
+ 004E  CD 13			    int 13h 
+				 
+ 0050  5A			    pop dx 
+ 0051  59			    pop cx 
+ 0052  58			    pop ax 
+ 0053  07			    pop es 
+ 0054  5B			    pop bx 
+ 0055  C3			    ret 
+				;----------------------------------------------
+				--------------------------------- 
+ 0056				installer3: 
+				    ;mainsub.exe in 3,4,5,6 
+				 
+ 0056  53			    push bx 
+ 0057  06			    push es 
+ 0058  50			    push ax 
+ 0059  51			    push cx 
+ 005A  52			    push dx 
+				 
+ 005B  BB ---- R		    mov bx,seg third_installed 
+ 005E  8E C3			    mov es,bx 
+ 0060  BB 054E R		    mov bx,offset third_installed   ;es:bx -> t
+				hird_installed 
+				 
+ 0063  B4 03			    mov ah,3    ;write 
+ 0065  B0 04			    mov al,4    ;amount 
+ 0067  B5 00			    mov ch,0 
+ 0069  B1 03			    mov cl,3    ;number:3 
+ 006B  BA 0000			    mov dx,0 
+ 006E  CD 13			    int 13h 
+				 
+ 0070  5A			    pop dx 
+ 0071  59			    pop cx 
+ 0072  58			    pop ax 
+ 0073  07			    pop es 
+ 0074  5B			    pop bx 
+ 0075  C3			    ret 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-3
+
+
+ 0076				first_installed:;XXXXXXXXXHere is 1st to be ins
+				talled.XXXXXXXXXXXXXXXXXXXXXXXXXX 
+				;CS:IP=0:7c00h 
+				;      0:7e00h 
+				 
+ 0076				booter: 
+ 0076  FA			    cli 
+				 
+ 0077  BB 0860			    mov bx,860h 
+ 007A  8E D3			    mov ss,bx 
+ 007C  BC 0400			    mov sp,400h     ;SS:SP=860h:400h 
+				 
+				    ;boot newint 
+				 
+ 007F  BB 0000			    mov bx,0 
+ 0082  8E C3			    mov es,bx 
+ 0084  BB 0200			    mov bx,200h     ;ES:BX=0:200h 
+				 
+ 0087  B4 02			    mov ah,2        ;read 
+ 0089  B0 01			    mov al,1        ;amount 
+ 008B  B5 00			    mov ch,0 
+ 008D  B1 02			    mov cl,2        ;number:2 
+ 008F  BA 0000			    mov dx,0 
+ 0092  CD 13			    int 13h         ;newint is ready, 0:200h~0:
+				210h are empty 
+				 
+ 0094  26: FF 36 0024		    push es:[9*4] 
+ 0099  26: 8F 06 0200		    pop es:[200h] 
+ 009E  26: FF 36 0026		    push es:[9*4+2] 
+ 00A3  26: 8F 06 0202		    pop es:[202h]   ;store old int9's address 
+ 00A8  26: C7 06 0024 0210	    mov word ptr es:[9*4],210h 
+ 00AF  26: C7 06 0026 0000	    mov word ptr es:[9*4+2],0    ;newint's addr
+				ess is 0:210h 
+				 
+ 00B6  26: C7 06 0204 0000	    mov word ptr es:[204h],0 
+ 00BD  26: C7 06 0206 07E0	    mov word ptr es:[206h],7e0h  ;(dword ptr 0:
+				204h)=7e0h:0 i.e. 0:7e00h 
+				 
+ 00C4  26: C7 06 0208 7C00	    mov word ptr es:[208h],7c00h 
+ 00CB  26: C7 06 020A 0000	    mov word ptr es:[20ah],0     ;(dword ptr 0:
+				208h)=0:7c00h i.e. 7c0h:0 
+				 
+ 00D2  26: C7 06 020C 0000	    mov word ptr es:[20ch],0 
+ 00D9  26: C7 06 020E FFFF	    mov word ptr es:[20eh],0ffffh     ;(dword p
+				tr 0:20ch)=0ffffh:0 
+				 
+ 00E0  BB 7E00			    mov bx,7e00h    ;ES:BX=0:7e00h 
+ 00E3  B4 02			    mov ah,2        ;read 
+ 00E5  B0 04			    mov al,4        ;amount 
+ 00E7  B5 00			    mov ch,0 
+ 00E9  B1 03			    mov cl,3        ;number:3 
+ 00EB  BA 0000			    mov dx,0 
+ 00EE  CD 13			    int 13h 
+				 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-4
+
+
+ 00F0  2E: FF 2E 0204		    jmp dword ptr cs:[204h] 
+				 
+ 00F5  00			    db 0 
+ 00F6  01FE[			    dw 510 dup (0aa55h) 
+	   AA55			
+			 ]	
+				
+ 04F2				second_installed:;XXXXXXXXHere is 2nd to be ins
+				talled.XXXXXXXXXXXXXXXXXXXXXXXXXX 
+ 04F2				newint: 
+				    ;two functions: 
+				    ;    Press f1  to change the time's string'
+				s color 
+				    ;    Press esc to jump to mainsub, i.e. 7e0
+				h:0 
+				 
+ 04F2  0010[			    db 10h dup (0) 
+	   00			
+			 ]	
+				
+				    ;10h 'free' bytes, newint starts at 0:210h 
+				 
+ 0502  50			    push ax 
+ 0503  57			    push di 
+ 0504  06			    push es 
+ 0505  51			    push cx 
+				 
+ 0506  E4 60			    in al,60h 
+				 
+ 0508  9C			    pushf 
+ 0509  2E: FF 1E 0200		    call dword ptr cs:[200h] 
+				 
+ 050E  3C 3B			    cmp al,3bh 
+ 0510  74 20			    je prs_f1 
+				 
+ 0512  3C 01			    cmp al,01h 
+ 0514  74 05			    je prs_esc 
+				 
+ 0516				    newint_end: 
+ 0516  59			        pop cx 
+ 0517  07			        pop es 
+ 0518  5F			        pop di 
+ 0519  58			        pop ax 
+ 051A  CF			        iret 
+				 
+ 051B				    prs_esc: 
+ 051B				        cl_kb: 
+ 051B  B4 00			            mov ah,0 
+ 051D  CD 16			            int 16h 
+ 051F  B4 01			            mov ah,1 
+ 0521  CD 16			            int 16h 
+ 0523  9C			            pushf 
+ 0524  58			            pop ax 
+ 0525  25 0040			            and ax,0000000001000000b 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-5
+
+
+ 0528  3D 0000			            cmp ax,0 
+ 052B  74 EE			            je cl_kb 
+ 052D  2E: FF 2E 0204		        jmp dword ptr cs:[204h] 
+				 
+ 0532				    prs_f1: 
+ 0532  BF 0291			        mov di,(80*4+8)*2+1 
+ 0535  B8 B800			        mov ax,0b800h 
+ 0538  8E C0			        mov es,ax               ;ES:DI=0b800h:(
+				80*4+8)*2+1 
+				 
+ 053A  26: 8A 05		        mov al,es:[di] 
+ 053D  FE C0			        inc al 
+ 053F  0C 08			        or al,00001000b         ;highlight 
+				 
+ 0541  B9 0031			        mov cx,49 
+ 0544				        change_time_color: 
+ 0544  26: 88 05		            mov es:[di],al 
+ 0547  83 C7 02			            add di,2 
+ 054A  E2 F8			            loop change_time_color 
+ 054C  EB C8			        jmp newint_end 
+ 054E				third_installed:;XXXXXXXXXHere is 3rd to be ins
+				talled.XXXXXXXXXXXXXXXXXXXXXXXXXX 
+				;CS:IP=7e0h:0 
+ 054E				mainsub: 
+ 054E  FA			    cli 
+				 
+ 054F  BB 0860			    mov bx,860h 
+ 0552  8E D3			    mov ss,bx 
+ 0554  BC 0400			    mov sp,400h         ;SS:SP=860h:400h 
+				 
+ 0557  E8 055D R		    call set_ui 
+ 055A  E9 0612 R		    jmp wait_choice 
+				;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxTWO SUBxxxx
+				xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
+ 055D				set_ui: 
+ 055D  55			    push bp 
+ 055E  8B EC			    mov bp,sp 
+ 0560  50			    push ax 
+ 0561  06			    push es 
+ 0562  57			    push di 
+ 0563  51			    push cx 
+ 0564  56			    push si 
+				 
+ 0565  FA			    cli 
+				 
+ 0566  BF B800			    mov di,0b800h 
+ 0569  8E C7			    mov es,di 
+ 056B  BF 0000			    mov di,0                ;ES:DI=0b800h:0 
+				 
+ 056E  B9 07D0			    mov cx,80*25 
+ 0571				    clearall: 
+ 0571  26: C7 05 0E00		        mov word ptr es:[di],0000111000000000b 
+				  ;default highlight yellow char 
+ 0576  83 C7 02			        add di,2 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-6
+
+
+ 0579  E2 F6			        loop clearall 
+				 
+ 057B  EB 4D 90			    jmp show_options 
+				 
+ 057E				    options: 
+ 057E  31 29 20 72 65 73 65	        db '1) reset pc',               0;12 
+       74 20 70 63 00		
+ 058A  32 29 20 73 74 61 72	        db '2) start system',           0;16 
+       74 20 73 79 73 74 65	
+       6D 00			
+ 059A  33 29 20 63 6C 6F 63	        db '3) clock',                  0;09 
+       6B 00			
+ 05A3  34 29 20 73 65 74 20	        db '4) set clock',              0;13 
+       63 6C 6F 63 6B 00	
+ 05B0  35 29 20 4C 4F 56 45	        db '5) LOVE from Miss.Jia Ran',0;26 
+       20 66 72 6F 6D 20 4D	
+       69 73 73 2E 4A 69 61	
+       20 52 61 6E 00		
+				 
+ 05CA				    show_options: 
+				    ;(1) 
+ 05CA  BE 0030			    mov si,offset options - offset mainsub 
+ 05CD  56			    push si 
+ 05CE  B4 0A			    mov ah,10 
+ 05D0  B0 32			    mov al,50 
+ 05D2  B1 0A			    mov cl,00001010b 
+ 05D4  E8 0C4A R		    call show_str 
+				 
+				    ;(2) 
+ 05D7  BE 003C			    mov si,offset options - offset mainsub + 12
+				 
+ 05DA  56			    push si 
+ 05DB  B4 0B			    mov ah,11 
+ 05DD  B0 32			    mov al,50 
+ 05DF  B1 0A			    mov cl,00001010b 
+ 05E1  E8 0C4A R		    call show_str 
+				 
+				    ;(3) 
+ 05E4  BE 004C			    mov si,offset options - offset mainsub + 12
+				 + 16 
+ 05E7  56			    push si 
+ 05E8  B4 0C			    mov ah,12 
+ 05EA  B0 32			    mov al,50 
+ 05EC  B1 0A			    mov cl,00001010b 
+ 05EE  E8 0C4A R		    call show_str 
+				 
+				    ;(4) 
+ 05F1  BE 0055			    mov si,offset options - offset mainsub + 12
+				 + 16 + 9 
+ 05F4  56			    push si 
+ 05F5  B4 0D			    mov ah,13 
+ 05F7  B0 32			    mov al,50 
+ 05F9  B1 0A			    mov cl,00001010b 
+ 05FB  E8 0C4A R		    call show_str 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-7
+
+
+				 
+				    ;(5) 
+ 05FE  BE 0062			    mov si,offset options - offset mainsub + 12
+				 + 16 + 9 + 13 
+ 0601  56			    push si 
+ 0602  B4 0F			    mov ah,15 
+ 0604  B0 32			    mov al,50 
+ 0606  B1 0A			    mov cl,00001010b 
+ 0608  E8 0C4A R		    call show_str 
+				 
+ 060B  5E			    pop si 
+ 060C  59			    pop cx 
+ 060D  5F			    pop di 
+ 060E  07			    pop es 
+ 060F  58			    pop ax 
+ 0610  5D			    pop bp 
+ 0611  C3			    ret 
+				;==============================================
+				================================= 
+ 0612				wait_choice: 
+ 0612  FB			    sti 
+ 0613  B4 00			    mov ah,0 
+ 0615  CD 16			    int 16h 
+				 
+ 0617  3C 31			    cmp al,'1' 
+ 0619  74 13			    je option1 
+ 061B  3C 32			    cmp al,'2' 
+ 061D  74 15			    je option2 
+ 061F  3C 33			    cmp al,'3' 
+ 0621  74 17			    je option3 
+ 0623  3C 34			    cmp al,'4' 
+ 0625  74 19			    je option4 
+ 0627  3C 35			    cmp al,'5' 
+ 0629  74 1B			    je option5 
+ 062B  EB 1F 90			    jmp next_option 
+				 
+ 062E				    option1: 
+ 062E  E8 064E R		        call f1 
+ 0631  EB 19 90			        jmp next_option 
+ 0634				    option2: 
+ 0634  E8 065A R		        call f2 
+ 0637  EB 13 90			        jmp next_option 
+ 063A				    option3: 
+ 063A  E8 067C R		        call f3 
+ 063D  EB 0D 90			        jmp next_option 
+ 0640				    option4: 
+ 0640  E8 0754 R		        call f4 
+ 0643  EB 07 90			        jmp next_option 
+ 0646				    option5: 
+ 0646  E8 09C7 R		        call f5 
+ 0649  EB 01 90			        jmp next_option 
+				 
+ 064C				    next_option: 
+ 064C  EB C4			        jmp wait_choice 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-8
+
+
+				;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxFIVE FUNCxxx
+				xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
+ 064E				f1: 
+ 064E  FA			    cli 
+				 
+ 064F  BB 0000			    mov bx,0 
+ 0652  8E C3			    mov es,bx 
+ 0654  BB 020C			    mov bx,20ch 
+				 
+ 0657  26: FF 2F		    jmp dword ptr es:[bx] 
+				;==============================================
+				================================= 
+ 065A				f2: 
+ 065A  FA			    cli 
+				 
+ 065B  BB 0000			    mov bx,0 
+ 065E  8E C3			    mov es,bx 
+ 0660  BB 7C00			    mov bx,7c00h 
+				 
+ 0663  B4 02			    mov ah,2 
+ 0665  B0 01			    mov al,1 
+ 0667  B5 00			    mov ch,0 
+ 0669  B1 01			    mov cl,1 
+ 066B  B6 00			    mov dh,0 
+ 066D  B2 80			    mov dl,80h 
+ 066F  CD 13			    int 13h 
+				 
+ 0671  BB 0000			    mov bx,0 
+ 0674  8E C3			    mov es,bx 
+ 0676  BB 0208			    mov bx,208h 
+				 
+ 0679  26: FF 2F		    jmp dword ptr es:[bx] 
+				;==============================================
+				================================= 
+ 067C				f3: 
+ 067C  55			    push bp 
+ 067D  8B EC			    mov bp,sp 
+ 067F  50			    push ax 
+ 0680  1E			    push ds 
+ 0681  56			    push si 
+ 0682  51			    push cx 
+				 
+ 0683  FB			    sti 
+				 
+ 0684  EB 33 90			    jmp read_cmos 
+ 0687				    itime: 
+ 0687  32 30 79 79 20 6D 6D	        db '20yy mm-dd hh:mm:ss (Press F1 to ch
+				ange color :-)',0 
+       2D 64 64 20 68 68 3A	
+       6D 6D 3A 73 73 20 28	
+       50 72 65 73 73 20 46	
+       31 20 74 6F 20 63 68	
+       61 6E 67 65 20 63 6F	
+       6C 6F 72 20 3A 2D 29	
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-9
+
+
+       00			
+				        ;   01234567890123456789012345678901234
+				5678901234567890 
+				        ;   0         1         2         3    
+				     4         5 
+				 
+ 06B9				    read_cmos: 
+ 06B9  0E			        push cs 
+ 06BA  1F			        pop ds 
+ 06BB  BE 0139			        mov si,offset itime - offset mainsub 
+				 
+				        ;year 
+ 06BE  B0 09			        mov al,9 
+ 06C0  E6 70			        out 70h,al 
+ 06C2  E4 71			        in al,71h 
+ 06C4  8A E0			        mov ah,al 
+ 06C6  25 0FF0			        and ax,0000111111110000b 
+ 06C9  B1 04			        mov cl,4 
+ 06CB  D2 E8			        shr al,cl 
+ 06CD  05 3030			        add ax,3030h 
+ 06D0  89 44 02			        mov word ptr ds:[si+2],ax 
+				 
+				        ;month 
+ 06D3  B0 08			        mov al,8 
+ 06D5  E6 70			        out 70h,al 
+ 06D7  E4 71			        in al,71h 
+ 06D9  8A E0			        mov ah,al 
+ 06DB  25 0FF0			        and ax,0000111111110000b 
+ 06DE  B1 04			        mov cl,4 
+ 06E0  D2 E8			        shr al,cl 
+ 06E2  05 3030			        add ax,3030h 
+ 06E5  89 44 05			        mov word ptr ds:[si+5],ax 
+				 
+				        ;day 
+ 06E8  B0 07			        mov al,7 
+ 06EA  E6 70			        out 70h,al 
+ 06EC  E4 71			        in al,71h 
+ 06EE  8A E0			        mov ah,al 
+ 06F0  25 0FF0			        and ax,0000111111110000b 
+ 06F3  B1 04			        mov cl,4 
+ 06F5  D2 E8			        shr al,cl 
+ 06F7  05 3030			        add ax,3030h 
+ 06FA  89 44 08			        mov word ptr ds:[si+8],ax 
+				 
+				        ;hour 
+ 06FD  B0 04			        mov al,4 
+ 06FF  E6 70			        out 70h,al 
+ 0701  E4 71			        in al,71h 
+ 0703  8A E0			        mov ah,al 
+ 0705  25 0FF0			        and ax,0000111111110000b 
+ 0708  B1 04			        mov cl,4 
+ 070A  D2 E8			        shr al,cl 
+ 070C  05 3030			        add ax,3030h 
+ 070F  89 44 0B			        mov word ptr ds:[si+11],ax 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-10
+
+
+				 
+				        ;minute 
+ 0712  B0 02			        mov al,2 
+ 0714  E6 70			        out 70h,al 
+ 0716  E4 71			        in al,71h 
+ 0718  8A E0			        mov ah,al 
+ 071A  25 0FF0			        and ax,0000111111110000b 
+ 071D  B1 04			        mov cl,4 
+ 071F  D2 E8			        shr al,cl 
+ 0721  05 3030			        add ax,3030h 
+ 0724  89 44 0E			        mov word ptr ds:[si+14],ax 
+				 
+				        ;second 
+ 0727  B0 00			        mov al,0 
+ 0729  E6 70			        out 70h,al 
+ 072B  E4 71			        in al,71h 
+ 072D  8A E0			        mov ah,al 
+ 072F  25 0FF0			        and ax,0000111111110000b 
+ 0732  B1 04			        mov cl,4 
+ 0734  D2 E8			        shr al,cl 
+ 0736  05 3030			        add ax,3030h 
+ 0739  89 44 11			        mov word ptr ds:[si+17],ax 
+				 
+ 073C  EB 01 90			        jmp show_itime 
+				 
+ 073F				    show_itime: 
+ 073F  56			        push si 
+ 0740  B8 0408			        mov ax,0408h 
+ 0743  BF B800			        mov di,0b800h 
+ 0746  8E C7			        mov es,di 
+ 0748  BF 0291			        mov di,4*80*2+8*2+1 
+ 074B  26: 8A 0D		        mov cl,es:[di] 
+ 074E  E8 0C4A R		        call show_str 
+ 0751  E9 06B9 R		        jmp read_cmos 
+				;==============================================
+				================================= 
+ 0754				f4: 
+ 0754  0E			    push cs 
+ 0755  1F			    pop ds 
+ 0756  BB 0211			    mov bx,offset fake_time - offset mainsub - 
+				1 
+				    ;ds:bx -> fake_time-1 
+				 
+ 0759  BF 0000			    mov di,0 
+ 075C  FB			    sti 
+				 
+ 075D  EB 1B 90			    jmp f4_start 
+ 0760				    fake_time: 
+ 0760  79 79 6D 6D 64 64 68	        db 'y','y','m','m','d','d','h','h','m',
+				'm','s','s',0 
+       68 6D 6D 73 73 00	
+ 076D  00 00 00 00 00 00 00	        db  0,  0,  0,  0,  0,  0,  0,  0,  0, 
+				 0,  0,  0, 0 
+       00 00 00 00 00 00	
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-11
+
+
+				        ;   0   1   2   3   4   5   6   7   8  
+				 9  10  11 12 
+ 077A				    f4_start: 
+ 077A  B8 B800			        mov ax,0b800h 
+ 077D  8E C0			        mov es,ax 
+ 077F  26: 8A 0E 0291		        mov cl,es:[80*2*4+2*8+1] 
+ 0784  B8 0408			        mov ax,0408h 
+ 0787  43			        inc bx 
+ 0788  53			        push bx 
+ 0789  4B			        dec bx 
+ 078A  E8 0C4A R		        call show_str 
+				 
+ 078D				    f4_wait: 
+ 078D  B4 00			        mov ah,0 
+ 078F  CD 16			        int 16h 
+				 
+ 0791  80 FC 0E			        cmp ah,0eh 
+ 0794  74 3B			        je prs_bs 
+ 0796  80 FC 1C			        cmp ah,1ch 
+ 0799  74 62			        je prs_entr 
+ 079B  3C 30			        cmp al,'0' 
+ 079D  72 EE			        jb f4_wait 
+ 079F  3C 39			        cmp al,'9' 
+ 07A1  77 EA			        ja f4_wait 
+ 07A3  EB 01 90			        jmp prs_num 
+				 
+ 07A6				    prs_num: 
+ 07A6  83 FF 0C			        cmp di,12 
+ 07A9  74 E2			        je f4_wait 
+				 
+ 07AB  47			        inc di 
+ 07AC  88 41 0D			        mov ds:[bx+di+13],al 
+				 
+ 07AF  B8 B800			        mov ax,0b800h 
+ 07B2  8E C0			        mov es,ax 
+ 07B4  26: 8A 0E 0291		        mov cl,es:[4*80*2+2*8+1] 
+				 
+ 07B9  43			        inc bx 
+ 07BA  53			        push bx 
+ 07BB  4B			        dec bx 
+ 07BC  B8 0408			        mov ax,0408h 
+ 07BF  E8 0C4A R		        call show_str 
+				 
+ 07C2  83 C3 0E			        add bx,14 
+ 07C5  53			        push bx 
+ 07C6  83 EB 0E			        sub bx,14 
+ 07C9  B8 0408			        mov ax,0408h 
+ 07CC  E8 0C4A R		        call show_str 
+				 
+ 07CF  EB BC			        jmp f4_wait 
+				 
+ 07D1				    prs_bs: 
+ 07D1  83 FF 00			        cmp di,0 
+ 07D4  74 B7			        je f4_wait 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-12
+
+
+				 
+ 07D6  C6 41 0D 00		        mov byte ptr ds:[bx+di+13],0 
+ 07DA  4F			        dec di 
+				 
+ 07DB  B8 B800			        mov ax,0b800h 
+ 07DE  8E C0			        mov es,ax 
+ 07E0  26: 8A 0E 0291		        mov cl,es:[4*80*2+2*8+1] 
+				 
+ 07E5  43			        inc bx 
+ 07E6  53			        push bx 
+ 07E7  4B			        dec bx 
+ 07E8  B8 0408			        mov ax,0408h 
+ 07EB  E8 0C4A R		        call show_str 
+				 
+ 07EE  83 C3 0E			        add bx,14 
+ 07F1  53			        push bx 
+ 07F2  83 EB 0E			        sub bx,14 
+ 07F5  B8 0408			        mov ax,0408h 
+ 07F8  E8 0C4A R		        call show_str 
+				 
+ 07FB  EB 90			        jmp f4_wait 
+				 
+ 07FD				    prs_entr: 
+				        ;y1) 
+ 07FD  83 FF 00			        cmp di,0 
+ 0800  74 42			        je f4_end_trans_y 
+ 0802  4F			        dec di 
+				 
+ 0803  B0 09			        mov al,9 
+ 0805  E6 70			        out 70h,al 
+ 0807  E4 71			        in al,71h 
+ 0809  24 0F			        and al,00001111b 
+				 
+ 080B  8A 6F 0E			        mov ch,ds:[bx+14] 
+ 080E  80 ED 30			        sub ch,30h 
+ 0811  B1 04			        mov cl,4 
+ 0813  D2 E5			        shl ch,cl 
+ 0815  0A C5			        or al,ch 
+				 
+ 0817  8A E0			        mov ah,al 
+ 0819  B0 09			        mov al,9 
+ 081B  E6 70			        out 70h,al 
+ 081D  8A C4			        mov al,ah 
+ 081F  E6 71			        out 71h,al 
+				 
+				        ;y2) 
+ 0821  83 FF 00			        cmp di,0 
+ 0824  74 1E			        je f4_end_trans_y 
+ 0826  4F			        dec di 
+				 
+ 0827  B0 09			        mov al,9 
+ 0829  E6 70			        out 70h,al 
+ 082B  E4 71			        in al,71h 
+ 082D  24 F0			        and al,11110000b 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-13
+
+
+				 
+ 082F  8A 6F 0F			        mov ch,ds:[bx+15] 
+ 0832  80 ED 30			        sub ch,30h 
+ 0835  0A C5			        or al,ch 
+				 
+ 0837  8A E0			        mov ah,al 
+ 0839  B0 09			        mov al,9 
+ 083B  E6 70			        out 70h,al 
+ 083D  8A C4			        mov al,ah 
+ 083F  E6 71			        out 71h,al 
+				 
+ 0841  EB 04 90			        jmp prs_entr_cnt_mon 
+				 
+ 0844				    f4_end_trans_y: 
+ 0844  E9 09B3 R		        jmp f4_end 
+				 
+ 0847				    prs_entr_cnt_mon: 
+				        ;m1) 
+ 0847  83 FF 00			        cmp di,0 
+ 084A  74 42			        je f4_end_trans_mon 
+ 084C  4F			        dec di 
+				 
+ 084D  B0 08			        mov al,8 
+ 084F  E6 70			        out 70h,al 
+ 0851  E4 71			        in al,71h 
+ 0853  24 0F			        and al,00001111b 
+				 
+ 0855  8A 6F 10			        mov ch,ds:[bx+16] 
+ 0858  80 ED 30			        sub ch,30h 
+ 085B  B1 04			        mov cl,4 
+ 085D  D2 E5			        shl ch,cl 
+ 085F  0A C5			        or al,ch 
+				 
+ 0861  8A E0			        mov ah,al 
+ 0863  B0 08			        mov al,8 
+ 0865  E6 70			        out 70h,al 
+ 0867  8A C4			        mov al,ah 
+ 0869  E6 71			        out 71h,al 
+				 
+				        ;m2) 
+ 086B  83 FF 00			        cmp di,0 
+ 086E  74 1E			        je f4_end_trans_mon 
+ 0870  4F			        dec di 
+				 
+ 0871  B0 08			        mov al,8 
+ 0873  E6 70			        out 70h,al 
+ 0875  E4 71			        in al,71h 
+ 0877  24 F0			        and al,11110000b 
+				 
+ 0879  8A 6F 11			        mov ch,ds:[bx+17] 
+ 087C  80 ED 30			        sub ch,30h 
+ 087F  0A C5			        or al,ch 
+				 
+ 0881  8A E0			        mov ah,al 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-14
+
+
+ 0883  B0 08			        mov al,8 
+ 0885  E6 70			        out 70h,al 
+ 0887  8A C4			        mov al,ah 
+ 0889  E6 71			        out 71h,al 
+				 
+ 088B  EB 04 90			        jmp prs_entr_cnt_d 
+				 
+ 088E				    f4_end_trans_mon: 
+ 088E  E9 09B3 R		        jmp f4_end 
+				 
+ 0891				    prs_entr_cnt_d: 
+				        ;d1) 
+ 0891  83 FF 00			        cmp di,0 
+ 0894  74 42			        je f4_end_trans_d 
+ 0896  4F			        dec di 
+				 
+ 0897  B0 07			        mov al,7 
+ 0899  E6 70			        out 70h,al 
+ 089B  E4 71			        in al,71h 
+ 089D  24 0F			        and al,00001111b 
+				 
+ 089F  8A 6F 12			        mov ch,ds:[bx+18] 
+ 08A2  80 ED 30			        sub ch,30h 
+ 08A5  B1 04			        mov cl,4 
+ 08A7  D2 E5			        shl ch,cl 
+ 08A9  0A C5			        or al,ch 
+				 
+ 08AB  8A E0			        mov ah,al 
+ 08AD  B0 07			        mov al,7 
+ 08AF  E6 70			        out 70h,al 
+ 08B1  8A C4			        mov al,ah 
+ 08B3  E6 71			        out 71h,al 
+				 
+				        ;d2) 
+ 08B5  83 FF 00			        cmp di,0 
+ 08B8  74 1E			        je f4_end_trans_d 
+ 08BA  4F			        dec di 
+				 
+ 08BB  B0 07			        mov al,7 
+ 08BD  E6 70			        out 70h,al 
+ 08BF  E4 71			        in al,71h 
+ 08C1  24 F0			        and al,11110000b 
+				 
+ 08C3  8A 6F 13			        mov ch,ds:[bx+19] 
+ 08C6  80 ED 30			        sub ch,30h 
+ 08C9  0A C5			        or al,ch 
+				 
+ 08CB  8A E0			        mov ah,al 
+ 08CD  B0 07			        mov al,7 
+ 08CF  E6 70			        out 70h,al 
+ 08D1  8A C4			        mov al,ah 
+ 08D3  E6 71			        out 71h,al 
+				 
+ 08D5  EB 04 90			        jmp prs_entr_cnt_h 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-15
+
+
+				 
+ 08D8				    f4_end_trans_d: 
+ 08D8  E9 09B3 R		        jmp f4_end 
+				 
+ 08DB				    prs_entr_cnt_h: 
+				        ;h1) 
+ 08DB  83 FF 00			        cmp di,0 
+ 08DE  74 42			        je f4_end_trans_h 
+ 08E0  4F			        dec di 
+				 
+ 08E1  B0 04			        mov al,4 
+ 08E3  E6 70			        out 70h,al 
+ 08E5  E4 71			        in al,71h 
+ 08E7  24 0F			        and al,00001111b 
+				 
+ 08E9  8A 6F 14			        mov ch,ds:[bx+20] 
+ 08EC  80 ED 30			        sub ch,30h 
+ 08EF  B1 04			        mov cl,4 
+ 08F1  D2 E5			        shl ch,cl 
+ 08F3  0A C5			        or al,ch 
+				 
+ 08F5  8A E0			        mov ah,al 
+ 08F7  B0 04			        mov al,4 
+ 08F9  E6 70			        out 70h,al 
+ 08FB  8A C4			        mov al,ah 
+ 08FD  E6 71			        out 71h,al 
+				 
+				        ;h2) 
+ 08FF  83 FF 00			        cmp di,0 
+ 0902  74 1E			        je f4_end_trans_h 
+ 0904  4F			        dec di 
+				 
+ 0905  B0 04			        mov al,4 
+ 0907  E6 70			        out 70h,al 
+ 0909  E4 71			        in al,71h 
+ 090B  24 F0			        and al,11110000b 
+				 
+ 090D  8A 6F 15			        mov ch,ds:[bx+21] 
+ 0910  80 ED 30			        sub ch,30h 
+ 0913  0A C5			        or al,ch 
+				 
+ 0915  8A E0			        mov ah,al 
+ 0917  B0 04			        mov al,4 
+ 0919  E6 70			        out 70h,al 
+ 091B  8A C4			        mov al,ah 
+ 091D  E6 71			        out 71h,al 
+				 
+ 091F  EB 04 90			        jmp prs_entr_cnt_min 
+				 
+ 0922				    f4_end_trans_h: 
+ 0922  E9 09B3 R		        jmp f4_end 
+				 
+ 0925				    prs_entr_cnt_min: 
+				        ;m1) 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-16
+
+
+ 0925  83 FF 00			        cmp di,0 
+ 0928  74 42			        je f4_end_trans_min 
+ 092A  4F			        dec di 
+				 
+ 092B  B0 02			        mov al,2 
+ 092D  E6 70			        out 70h,al 
+ 092F  E4 71			        in al,71h 
+ 0931  24 0F			        and al,00001111b 
+				 
+ 0933  8A 6F 16			        mov ch,ds:[bx+22] 
+ 0936  80 ED 30			        sub ch,30h 
+ 0939  B1 04			        mov cl,4 
+ 093B  D2 E5			        shl ch,cl 
+ 093D  0A C5			        or al,ch 
+				 
+ 093F  8A E0			        mov ah,al 
+ 0941  B0 02			        mov al,2 
+ 0943  E6 70			        out 70h,al 
+ 0945  8A C4			        mov al,ah 
+ 0947  E6 71			        out 71h,al 
+				 
+				        ;m2) 
+ 0949  83 FF 00			        cmp di,0 
+ 094C  74 1E			        je f4_end_trans_min 
+ 094E  4F			        dec di 
+				 
+ 094F  B0 02			        mov al,2 
+ 0951  E6 70			        out 70h,al 
+ 0953  E4 71			        in al,71h 
+ 0955  24 F0			        and al,11110000b 
+				 
+ 0957  8A 6F 17			        mov ch,ds:[bx+23] 
+ 095A  80 ED 30			        sub ch,30h 
+ 095D  0A C5			        or al,ch 
+				 
+ 095F  8A E0			        mov ah,al 
+ 0961  B0 02			        mov al,2 
+ 0963  E6 70			        out 70h,al 
+ 0965  8A C4			        mov al,ah 
+ 0967  E6 71			        out 71h,al 
+				 
+ 0969  EB 04 90			        jmp prs_entr_cnt_s 
+				 
+ 096C				    f4_end_trans_min: 
+ 096C  EB 45 90			        jmp f4_end 
+				 
+ 096F				    prs_entr_cnt_s: 
+				        ;s1) 
+ 096F  83 FF 00			        cmp di,0 
+ 0972  74 3F			        je f4_end 
+ 0974  4F			        dec di 
+				 
+ 0975  B0 00			        mov al,0 
+ 0977  E6 70			        out 70h,al 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-17
+
+
+ 0979  E4 71			        in al,71h 
+ 097B  24 0F			        and al,00001111b 
+				 
+ 097D  8A 6F 18			        mov ch,ds:[bx+24] 
+ 0980  80 ED 30			        sub ch,30h 
+ 0983  B1 04			        mov cl,4 
+ 0985  D2 E5			        shl ch,cl 
+ 0987  0A C5			        or al,ch 
+				 
+ 0989  8A E0			        mov ah,al 
+ 098B  B0 00			        mov al,0 
+ 098D  E6 70			        out 70h,al 
+ 098F  8A C4			        mov al,ah 
+ 0991  E6 71			        out 71h,al 
+				 
+				        ;s2) 
+ 0993  83 FF 00			        cmp di,0 
+ 0996  74 1B			        je f4_end 
+ 0998  4F			        dec di 
+				 
+ 0999  B0 00			        mov al,0 
+ 099B  E6 70			        out 70h,al 
+ 099D  E4 71			        in al,71h 
+ 099F  24 F0			        and al,11110000b 
+				 
+ 09A1  8A 6F 19			        mov ch,ds:[bx+25] 
+ 09A4  80 ED 30			        sub ch,30h 
+ 09A7  0A C5			        or al,ch 
+				 
+ 09A9  8A E0			        mov ah,al 
+ 09AB  B0 00			        mov al,0 
+ 09AD  E6 70			        out 70h,al 
+ 09AF  8A C4			        mov al,ah 
+ 09B1  E6 71			        out 71h,al 
+				 
+ 09B3				    f4_end: 
+ 09B3  B9 000D			        mov cx,13 
+ 09B6				        cl_time: 
+ 09B6  C6 47 0E 00		            mov byte ptr ds:[bx+14],0 
+ 09BA  43			            inc bx 
+ 09BB  E2 F9			            loop cl_time 
+ 09BD  BB 0000			        mov bx,0 
+ 09C0  8E DB			        mov ds,bx 
+ 09C2  BB 0204			        mov bx,204h 
+ 09C5  FF 2F			        jmp dword ptr ds:[bx] 
+				;==============================================
+				================================= 
+ 09C7				f5: 
+ 09C7  FB			    sti 
+				 
+ 09C8  E9 0C14 R		    jmp f5_set 
+ 09CB				    f5_image: 
+				        ;   0  1  2  3   4  5  6  7   8  9 10 1
+				1  12 13 14 15  16 17 18 19  32 21 22 23  24 25
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-18
+
+
+				 26 27  28 29 30 31  32 33 34 35  36 3
+ 09CB  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 32,32,03,0
+				3, 03,03,03,03, 03,03,32,32, 32,32,32,32, 03,03
+				,03,03, 03,03,03,03, 32,32,32,32, 32,3
+       20 20 20 03 03 03 03	
+       03 03 03 03 20 20 20	
+       20 20 20 03 03 03 03	
+       03 03 03 03 20 20 20	
+       20 20 20 00		
+ 09F2  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 03,03,32,3
+				2, 32,32,32,32, 32,32,03,03, 32,32,03,03, 32,32
+				,32,32, 32,32,32,32, 03,03,32,32, 32,3
+       20 03 03 20 20 20 20	
+       20 20 20 20 03 03 20	
+       20 03 03 20 20 20 20	
+       20 20 20 20 03 03 20	
+       20 20 20 00		
+ 0A19  20 20 20 20 20 20 03	        db 32,32,32,32, 32,32,03,03, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 03,03,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,03,03, 32,3
+       03 20 20 20 20 20 20	
+       20 20 20 20 20 20 03	
+       03 20 20 20 20 20 20	
+       20 20 20 20 20 20 03	
+       03 20 20 00		
+ 0A40  20 20 20 20 03 03 20	        db 32,32,32,32, 03,03,32,32, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,32,32, 03,0
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 03 03 00		
+ 0A67  20 20 20 20 03 03 20	        db 32,32,32,32, 03,03,32,32, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,32,32, 03,0
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 03 03 00		
+				 
+ 0A8E  20 20 20 20 03 03 20	        db 32,32,32,32, 03,03,32,32, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,32,32, 03,0
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 03 03 00		
+ 0AB5  20 20 20 20 03 03 20	        db 32,32,32,32, 03,03,32,32, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,32,32, 03,0
+       20 20 20 20 20 20 20	
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-19
+
+
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 03 03 00		
+ 0ADC  20 20 20 20 03 03 03	        db 32,32,32,32, 03,03,03,03, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,03,03, 03,0
+       03 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 03	
+       03 03 03 00		
+ 0B03  20 20 20 20 20 20 03	        db 32,32,32,32, 32,32,03,03, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,03,03, 32,3
+       03 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 03	
+       03 20 20 00		
+ 0B2A  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 03,03,32,3
+				2, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,32,32, 03,03,32,32, 32,3
+       20 03 03 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 03 03 20	
+       20 20 20 00		
+				 
+ 0B51  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 32,32,03,0
+				3, 32,32,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 32,32,03,03, 32,32,32,32, 32,3
+       20 20 20 03 03 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 03 03 20 20 20	
+       20 20 20 00		
+ 0B78  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 32,32,32,3
+				2, 03,03,32,32, 32,32,32,32, 32,32,32,32, 32,32
+				,32,32, 03,03,32,32, 32,32,32,32, 32,3
+       20 20 20 20 20 03 03	
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       03 03 20 20 20 20 20	
+       20 20 20 00		
+ 0B9F  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 32,32,32,3
+				2, 32,32,03,03, 03,03,32,32, 32,32,32,32, 03,03
+				,03,03, 32,32,32,32, 32,32,32,32, 32,3
+       20 20 20 20 20 20 20	
+       03 03 03 03 20 20 20	
+       20 20 20 03 03 03 03	
+       20 20 20 20 20 20 20	
+       20 20 20 00		
+ 0BC6  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 32,32,32,3
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-20
+
+
+				2, 32,32,32,32, 32,32,03,03, 32,32,03,03, 32,32
+				,32,32, 32,32,32,32, 32,32,32,32, 32,3
+       20 20 20 20 20 20 20	
+       20 20 20 20 03 03 20	
+       20 03 03 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 00		
+ 0BED  20 20 20 20 20 20 20	        db 32,32,32,32, 32,32,32,32, 32,32,32,3
+				2, 32,32,32,32, 32,32,32,32, 03,03,32,32, 32,32
+				,32,32, 32,32,32,32, 32,32,32,32, 32,3
+       20 20 20 20 20 20 20	
+       20 20 20 20 20 20 03	
+       03 20 20 20 20 20 20	
+       20 20 20 20 20 20 20	
+       20 20 20 00		
+				 
+ 0C14				    f5_set: 
+ 0C14  BE 047D			    mov si,offset f5_image - offset mainsub 
+				 
+ 0C17  B4 06			    mov ah,6 
+ 0C19  B0 00			    mov al,0 
+				 
+ 0C1B  B9 000F			    mov cx,15 
+ 0C1E				    f5_show_image: 
+ 0C1E  56			        push si 
+ 0C1F  E8 0C4A R		        call show_str 
+ 0C22  83 C6 27			        add si,39 
+ 0C25  FE C4			        inc ah 
+ 0C27  E2 F5			        loop f5_show_image 
+				 
+ 0C29  EB 0F 90			    jmp f5_show_jxt 
+ 0C2C				    jiaxintang: 
+ 0C2C  4A 69 61 20 58 69 6E	        db 'Jia Xin Tang~',0 
+       20 54 61 6E 67 7E 00	
+ 0C3A				    f5_show_jxt: 
+ 0C3A  BE 06DE			        mov si,offset jiaxintang - offset mains
+				ub 
+ 0C3D  56			        push si 
+ 0C3E  B4 0B			        mov ah,11 
+ 0C40  B0 0F			        mov al,15 
+ 0C42  B1 0C			        mov cl,00001100b 
+ 0C44  E8 0C4A R		        call show_str 
+				 
+ 0C47				    wait_f5_esc: 
+ 0C47  90			        nop 
+ 0C48  EB FD			        jmp wait_f5_esc 
+				;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxshow_strxxx
+				xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx 
+ 0C4A				show_str: 
+				    ;ah=row, al=col, cl=color; push offset 
+				 
+ 0C4A  55			    push bp 
+ 0C4B  8B EC			    mov bp,sp 
+ 0C4D  50			    push ax 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-21
+
+
+ 0C4E  06			    push es 
+ 0C4F  53			    push bx 
+ 0C50  51			    push cx 
+ 0C51  57			    push di 
+ 0C52  1E			    push ds 
+ 0C53  56			    push si 
+				    ;offset=[bp+4] 
+				 
+ 0C54  BB B800			    mov bx,0b800h 
+ 0C57  8E C3			    mov es,bx 
+				 
+ 0C59  8B D8			    mov bx,ax        ;bh=row,bl=col 
+ 0C5B  8A E9			    mov ch,cl 
+ 0C5D  B1 08			    mov cl,8 
+ 0C5F  D3 E8			    shr ax,cl        ;al=row 
+ 0C61  B4 A0			    mov ah,80*2 
+ 0C63  F6 E4			    mul ah           ;ax=row*80*2 
+ 0C65  8B F8			    mov di,ax        ;di=row*80*2 
+ 0C67  8A C3			    mov al,bl        ;al=col 
+ 0C69  B4 02			    mov ah,2 
+ 0C6B  F6 E4			    mul ah           ;ax=col*2 
+				 
+ 0C6D  03 F8			    add di,ax        ;ES:DI -> screen's ram 
+ 0C6F  0E			    push cs 
+ 0C70  1F			    pop ds 
+ 0C71  8B 76 04			    mov si,[bp+4]    ;DS:SI -> string's address
+				 
+				 
+ 0C74				    show_char: 
+ 0C74  8A 0C			        mov cl,ds:[si] 
+ 0C76  51			        push cx 
+ 0C77  B5 00			        mov ch,0 
+ 0C79  E3 0A			        jcxz show_char_end 
+ 0C7B  59			        pop cx 
+ 0C7C  26: 89 0D		        mov es:[di],cx 
+ 0C7F  46			        inc si 
+ 0C80  83 C7 02			        add di,2 
+ 0C83  EB EF			        jmp show_char 
+				 
+ 0C85				    show_char_end: 
+ 0C85  59			        pop cx              ;pushed one cx but 
+				haven't poped when show_char ends 
+				 
+ 0C86  5E			        pop si 
+ 0C87  1F			        pop ds 
+ 0C88  5F			        pop di 
+ 0C89  59			        pop cx 
+ 0C8A  5B			        pop bx 
+ 0C8B  07			        pop es 
+ 0C8C  58			        pop ax 
+ 0C8D  5D			        pop bp 
+ 0C8E  C2 0002			        ret 2 
+				;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+				XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Page     1-22
+
+
+ 0C91				code ends 
+				end start 
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Symbols-1
+
+
+Segments and Groups:
+
+                N a m e         	Length	 Align	Combine Class
+
+CODE . . . . . . . . . . . . . .  	0C91	PARA	NONE	
+STACK  . . . . . . . . . . . . .  	0020	PARA	NONE	
+
+Symbols:            
+
+                N a m e         	Type	 Value	 Attr
+
+BOOTER . . . . . . . . . . . . .  	L NEAR	0076	CODE
+
+CHANGE_TIME_COLOR  . . . . . . .  	L NEAR	0544	CODE
+CLEARALL . . . . . . . . . . . .  	L NEAR	0571	CODE
+CL_KB  . . . . . . . . . . . . .  	L NEAR	051B	CODE
+CL_TIME  . . . . . . . . . . . .  	L NEAR	09B6	CODE
+
+F1 . . . . . . . . . . . . . . .  	L NEAR	064E	CODE
+F2 . . . . . . . . . . . . . . .  	L NEAR	065A	CODE
+F3 . . . . . . . . . . . . . . .  	L NEAR	067C	CODE
+F4 . . . . . . . . . . . . . . .  	L NEAR	0754	CODE
+F4_END . . . . . . . . . . . . .  	L NEAR	09B3	CODE
+F4_END_TRANS_D . . . . . . . . .  	L NEAR	08D8	CODE
+F4_END_TRANS_H . . . . . . . . .  	L NEAR	0922	CODE
+F4_END_TRANS_MIN . . . . . . . .  	L NEAR	096C	CODE
+F4_END_TRANS_MON . . . . . . . .  	L NEAR	088E	CODE
+F4_END_TRANS_Y . . . . . . . . .  	L NEAR	0844	CODE
+F4_START . . . . . . . . . . . .  	L NEAR	077A	CODE
+F4_WAIT  . . . . . . . . . . . .  	L NEAR	078D	CODE
+F5 . . . . . . . . . . . . . . .  	L NEAR	09C7	CODE
+F5_IMAGE . . . . . . . . . . . .  	L NEAR	09CB	CODE
+F5_SET . . . . . . . . . . . . .  	L NEAR	0C14	CODE
+F5_SHOW_IMAGE  . . . . . . . . .  	L NEAR	0C1E	CODE
+F5_SHOW_JXT  . . . . . . . . . .  	L NEAR	0C3A	CODE
+FAKE_TIME  . . . . . . . . . . .  	L NEAR	0760	CODE
+FIRST_INSTALLED  . . . . . . . .  	L NEAR	0076	CODE
+
+INSTALLER1 . . . . . . . . . . .  	L NEAR	0016	CODE
+INSTALLER2 . . . . . . . . . . .  	L NEAR	0036	CODE
+INSTALLER3 . . . . . . . . . . .  	L NEAR	0056	CODE
+ITIME  . . . . . . . . . . . . .  	L NEAR	0687	CODE
+
+JIAXINTANG . . . . . . . . . . .  	L NEAR	0C2C	CODE
+
+MAINSUB  . . . . . . . . . . . .  	L NEAR	054E	CODE
+
+NEWINT . . . . . . . . . . . . .  	L NEAR	04F2	CODE
+NEWINT_END . . . . . . . . . . .  	L NEAR	0516	CODE
+NEXT_OPTION  . . . . . . . . . .  	L NEAR	064C	CODE
+
+OPTION1  . . . . . . . . . . . .  	L NEAR	062E	CODE
+OPTION2  . . . . . . . . . . . .  	L NEAR	0634	CODE
+OPTION3  . . . . . . . . . . . .  	L NEAR	063A	CODE
+Microsoft (R) Macro Assembler Version 5.00                  3/3/22 19:06:58
+                                                             Symbols-2
+
+
+OPTION4  . . . . . . . . . . . .  	L NEAR	0640	CODE
+OPTION5  . . . . . . . . . . . .  	L NEAR	0646	CODE
+OPTIONS  . . . . . . . . . . . .  	L NEAR	057E	CODE
+
+PRS_BS . . . . . . . . . . . . .  	L NEAR	07D1	CODE
+PRS_ENTR . . . . . . . . . . . .  	L NEAR	07FD	CODE
+PRS_ENTR_CNT_D . . . . . . . . .  	L NEAR	0891	CODE
+PRS_ENTR_CNT_H . . . . . . . . .  	L NEAR	08DB	CODE
+PRS_ENTR_CNT_MIN . . . . . . . .  	L NEAR	0925	CODE
+PRS_ENTR_CNT_MON . . . . . . . .  	L NEAR	0847	CODE
+PRS_ENTR_CNT_S . . . . . . . . .  	L NEAR	096F	CODE
+PRS_ESC  . . . . . . . . . . . .  	L NEAR	051B	CODE
+PRS_F1 . . . . . . . . . . . . .  	L NEAR	0532	CODE
+PRS_NUM  . . . . . . . . . . . .  	L NEAR	07A6	CODE
+
+READ_CMOS  . . . . . . . . . . .  	L NEAR	06B9	CODE
+
+SECOND_INSTALLED . . . . . . . .  	L NEAR	04F2	CODE
+SET_UI . . . . . . . . . . . . .  	L NEAR	055D	CODE
+SHOW_CHAR  . . . . . . . . . . .  	L NEAR	0C74	CODE
+SHOW_CHAR_END  . . . . . . . . .  	L NEAR	0C85	CODE
+SHOW_ITIME . . . . . . . . . . .  	L NEAR	073F	CODE
+SHOW_OPTIONS . . . . . . . . . .  	L NEAR	05CA	CODE
+SHOW_STR . . . . . . . . . . . .  	L NEAR	0C4A	CODE
+START  . . . . . . . . . . . . .  	L NEAR	0000	CODE
+
+THIRD_INSTALLED  . . . . . . . .  	L NEAR	054E	CODE
+
+WAIT_CHOICE  . . . . . . . . . .  	L NEAR	0612	CODE
+WAIT_F5_ESC  . . . . . . . . . .  	L NEAR	0C47	CODE
+
+@FILENAME  . . . . . . . . . . .  	TEXT  dog		
+
+
+    961 Source  Lines
+    961 Total   Lines
+     65 Symbols
+
+  50920 + 416472 Bytes symbol space free
+
+      0 Warning Errors
+      0 Severe  Errors
