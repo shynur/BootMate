@@ -131,4 +131,4 @@ ________________________________________
 
 ## LICENSE
 
-[MIT License](./LICENSE), 仅针对 [`MAIN.ASM`](./MAIN.ASM) 和 [`README.md`](./README.md).
+[MIT License](./LICENSE), 仅针对我编写的 [`MAIN.ASM`](./MAIN.ASM) 和 [`README.md`](./README.md).
