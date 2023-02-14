@@ -933,6 +933,7 @@ show_str:
 
     push cs
     pop ds
+
     mov si,[bp+4]    ;DS:SI -> string's address
 
     show_char:
