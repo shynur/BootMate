@@ -1,0 +1,19 @@
+DOG.exe 中 装载了程序 installer1, installer2, installer3, booter, newint, mainsub, set_ui, wait_choice, f1, f2, f3, f4, f5, show_str;
+
+mainsub 拥有五个功能函数 f1~f5, 两个子函数 set_ui & wait_choice, 一个通用的 show_str;
+
+installer1 将 booter 装入软盘1号扇区, installer2 将 newint 装入软盘2号扇区, installer3 将 mainsub 装入软盘 3~6 号扇区;
+
+booter 负责用 newint 替换旧的 BIOS int 9h 中断例程, 将 mainsub 安装, 并将几个重要的地址记录在地址 0:200h 处.  Jump 至 mainsub;
+
+newint 位于 0:200h-0:400h, 但前 10h bytes 留空, 用来给 booter 写入几个函数的入口地址. newint 在旧的 int 9h 功能的基础上增加了对 F1 与 ESC 键的特殊处理.  Press ESC to jump to mainsub again;
+
+mainsub 位于 7e0h:0.  开辟一块栈之后, call set_ui and then jump to wait_choice;
+
+show_str 功能是 show string;
+
+set_ui 功能是 set UI;
+
+wait_choice 用于触发 f1~f5;
+
+注意: 需要想出一个 idea (源程序中有具体方法), 解决按下 esc 之后键盘缓冲区如何清空的问题.
