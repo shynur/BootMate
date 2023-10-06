@@ -1,4 +1,4 @@
-DOG.exe 中 装载了程序 installer1, installer2, installer3, booter, newint, mainsub, set_ui, wait_choice, f1, f2, f3, f4, f5, show_str;
+MAIN.EXE 中 装载了程序 installer1, installer2, installer3, booter, newint, mainsub, set_ui, wait_choice, f1, f2, f3, f4, f5, show_str;
 
 mainsub 拥有五个功能函数 f1~f5, 两个子函数 set_ui & wait_choice, 一个通用的 show_str;
 
