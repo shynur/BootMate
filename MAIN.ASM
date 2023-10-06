@@ -237,7 +237,7 @@ mainsub:
     call set_ui
     jmp wait_choice
 
-;;---------------- SUB -----------------
+;;---------------- 2 SUB -----------------
 
 set_ui:
     push bp
