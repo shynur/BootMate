@@ -1,5 +1,3 @@
-# Before Bootstrap
-
 - [B 站视频演示](https://www.bilibili.com/video/BV15L411w7kU?share_source=copy_web "反转了, 我不是嘉心糖, 我是雏草姬"): 和视频中有出入的地方是文件名; 这个视频只是单纯的 demo, 并没有提到使用方式, 不看也罢.
 - [代码结构分析](https://blog.csdn.net/qq_66550041/article/details/122606740): 原文发表于 CSDN, 防止它哪天倒闭, 现将其复制 (并稍加修改) 到本仓库的 [`COMMENTARY.txt`](COMMENTARY.txt) 文件.  同样地, 原文与本仓库中的文件名有出入.
 
