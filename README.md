@@ -3,9 +3,9 @@
 
 ___
 
-## 食用方式
+# 食用方式
 
-### 目录树 (只包含会用到的文件):
+## 目录树 (只包含会用到的文件):
 
 ```
 ./
@@ -23,7 +23,7 @@ ___
        |__LINK.EXE
 ```
 
-### 准备工作
+## 准备工作
 
 首先安装 Windows XP.  考虑到有些朋友不知道如何安装, 鼠鼠这里先解释一下:
 
@@ -107,7 +107,7 @@ LINK.EXE MAIN.OBJ
 关闭虚拟机, 在模拟器中将软驱设置为启动顺序的第一个, 再启动虚拟机.  <br />
 如果你能看到五行绿字, 那就说明 XP 手术很成功.
 
-### The Program
+## the Program
 
 键入 `1`, `2`, ..., `5`, 以选择不同的子功能.  <br />
 键入 `ESC` 退出子功能, 回到主界面.
@@ -125,8 +125,6 @@ LINK.EXE MAIN.OBJ
 
 5. 5
 
-________________________________________
+# LICENSE
 
-## LICENSE
-
-[MIT License](./LICENSE), 仅针对我编写的 [`MAIN.ASM`](./MAIN.ASM) 和 [`README.md`](./README.md).
+[MIT License](./LICENSE), 仅针对我编写的 [`COMMENTARY.txt`](./COMMENTARY.txt), [`MAIN.ASM`](./MAIN.ASM), 和 [`README.md`](./README.md).
